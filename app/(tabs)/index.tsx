@@ -1,75 +1,92 @@
-import { Image } from 'expo-image';
-import { Platform, StyleSheet } from 'react-native';
-
-import { HelloWave } from '@/components/HelloWave';
 import ParallaxScrollView from '@/components/ParallaxScrollView';
 import { ThemedText } from '@/components/ThemedText';
-import { ThemedView } from '@/components/ThemedView';
+import MainCurrentTrip from '@/components/ui/MainCurrentTrip';
+import MainTripContainer from '@/components/ui/MainTripContainer';
+import { Colors } from '@/constants/Colors';
+import { useAppContext } from '@/hooks/AppContext';
+import { useThemeColor } from '@/hooks/useThemeColor';
+import { Trip } from '@/types';
+import { Image } from 'expo-image';
+import { useEffect, useState } from 'react';
+import { Pressable, ScrollView, StyleSheet, View } from 'react-native';
 
 export default function HomeScreen() {
+  const { trips } = useAppContext()
+  const background = useThemeColor({ light: Colors.light.background, dark: Colors.dark.background }, 'background')
+  const [activeTrip, setActiveTrip] = useState<Trip | null>(null)
+
+  const normalizeDate = (date: Date): Date => {
+    return new Date(date.getFullYear(), date.getMonth(), date.getDate());
+  };
+
+  const getActiveTrip = (trips: Trip[]): Trip | null => {
+    const today = normalizeDate(new Date());
+
+    return trips.find(trip => {
+      const departure = normalizeDate(new Date(trip.departureDate));
+      const returned = normalizeDate(new Date(trip.returnedDate));
+
+      return departure <= today && today <= returned;
+    }) || null;
+};
+
+  useEffect(() => {
+    const trip = getActiveTrip(trips)
+    if(trip) setActiveTrip(trip)
+  }, [trips])
+
   return (
     <ParallaxScrollView
-      headerBackgroundColor={{ light: '#A1CEDC', dark: '#1D3D47' }}
-      headerImage={
-        <Image
-          source={require('@/assets/images/partial-react-logo.png')}
-          style={styles.reactLogo}
-        />
-      }>
-      <ThemedView style={styles.titleContainer}>
-        <ThemedText type="title">Welcome!</ThemedText>
-        <HelloWave />
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 1: Try it</ThemedText>
-        <ThemedText>
-          Edit <ThemedText type="defaultSemiBold">app/(tabs)/index.tsx</ThemedText> to see changes.
-          Press{' '}
-          <ThemedText type="defaultSemiBold">
-            {Platform.select({
-              ios: 'cmd + d',
-              android: 'cmd + m',
-              web: 'F12',
-            })}
-          </ThemedText>{' '}
-          to open developer tools.
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 2: Explore</ThemedText>
-        <ThemedText>
-          {`Tap the Explore tab to learn more about what's included in this starter app.`}
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 3: Get a fresh start</ThemedText>
-        <ThemedText>
-          {`When you're ready, run `}
-          <ThemedText type="defaultSemiBold">npm run reset-project</ThemedText> to get a fresh{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> directory. This will move the current{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> to{' '}
-          <ThemedText type="defaultSemiBold">app-example</ThemedText>.
-        </ThemedText>
-      </ThemedView>
+      headerBackgroundColor={{light: background, dark: background}}
+      headerImage={<Image style={styles.image} source={"https://images.unsplash.com/photo-1532968682779-218bea4f06c3?q=80&w=870&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"} />}
+    >
+      <View>
+        <ScrollView horizontal style={{ paddingBottom: 8 }} >
+          <View style={[styles.actionCard, { backgroundColor: '#e3e3e3' }]}>
+            <ThemedText style={{ color: '#000', fontSize: 16 }}>New Trip Request</ThemedText>
+          </View>
+          <View style={[styles.actionCard, { backgroundColor: '#e3e3e3' }]}>
+            <ThemedText style={{ color: '#000', fontSize: 16 }}>Expenses Report</ThemedText>
+          </View>
+          <View style={[styles.actionCard, { backgroundColor: '#e3e3e3' }]}>
+            <ThemedText style={{ color: '#000', fontSize: 16 }}>Pending Approvations</ThemedText>
+          </View>
+          <View style={[styles.actionCard, { backgroundColor: '#e3e3e3' }]}>
+            <ThemedText style={{ color: '#000', fontSize: 16 }}>Report Issues</ThemedText>
+          </View>
+        </ScrollView>
+      </View>
+
+      {activeTrip && (
+        <Pressable>
+          <MainCurrentTrip trip={activeTrip} />
+        </Pressable>
+      )}
+
+      <View>
+        <ThemedText type='title'>Business Trip</ThemedText>
+
+        <View style={{ gap: 10 }}>
+          {trips.map(trip => (
+            <MainTripContainer key={trip.id} trip={trip} />
+          ))}
+        </View>
+      </View>
     </ParallaxScrollView>
   );
 }
 
 const styles = StyleSheet.create({
-  titleContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
+  image: {
+    flex: 1,
+    width: '100%',
+    backgroundColor: '#0553',
   },
-  stepContainer: {
-    gap: 8,
-    marginBottom: 8,
-  },
-  reactLogo: {
-    height: 178,
-    width: 290,
-    bottom: 0,
-    left: 0,
-    position: 'absolute',
-  },
+  actionCard: {
+    color: '#fff',
+    padding: 10,
+    borderRadius: 15, 
+    justifyContent: 'center', 
+    marginRight: 5,
+  }
 });
