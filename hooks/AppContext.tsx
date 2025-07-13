@@ -1,5 +1,6 @@
+import { getExpenses } from '@/api/expensesApi';
 import { getTrips } from '@/api/tripApi';
-import { Trip } from '@/types';
+import { Expense, Trip } from '@/types';
 import { usePathname, useRouter } from 'expo-router';
 import * as SecureStore from 'expo-secure-store';
 import React, { createContext, ReactNode, useContext, useEffect, useState } from 'react';
@@ -9,21 +10,27 @@ type AppContextType = {
     handleSetAuth: (token: string) => Promise<void>
     logOut: () => Promise<void>
     trips: Trip[]
+    getInfo: () => Promise<void>
+    expenses: Expense[]
 };
 
 const AppContext = createContext<AppContextType | undefined>(undefined);
 
 export const AppProvider = ({ children }: { children: ReactNode }) => {
     const [trips, setTrips] = useState<Trip[]>([])
+    const [expenses, setExpenses] = useState<Expense[]>([])
+
     const pathname = usePathname()
     const router = useRouter()
 
     const getInfo = async() => {
         try {
             const trips = await getTrips()
+            const expenses = await getExpenses()
 
-            if(trips) {
+            if(trips && expenses) {
                 setTrips(trips)
+                setExpenses(expenses)
             }
         } catch (error) {
             console.log(error)
@@ -56,10 +63,10 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
             }
         }
         checkIsAuth()
-    }, [pathname])
+    }, [])
 
     return (
-        <AppContext.Provider value={{ handleIsAuth, handleSetAuth, logOut, trips }}>
+        <AppContext.Provider value={{ handleIsAuth, handleSetAuth, logOut, trips, getInfo, expenses }}>
             {children}
         </AppContext.Provider>
     );

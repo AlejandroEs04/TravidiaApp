@@ -13,6 +13,7 @@ import { Pressable, ScrollView, StyleSheet, View } from 'react-native';
 export default function HomeScreen() {
   const { trips } = useAppContext()
   const background = useThemeColor({ light: Colors.light.background, dark: Colors.dark.background }, 'background')
+  const backgroundColor = useThemeColor({ light: Colors.light.container, dark: Colors.dark.container }, 'background')
   const [activeTrip, setActiveTrip] = useState<Trip | null>(null)
 
   const normalizeDate = (date: Date): Date => {
@@ -42,17 +43,17 @@ export default function HomeScreen() {
     >
       <View>
         <ScrollView horizontal style={{ paddingBottom: 8 }} >
-          <View style={[styles.actionCard, { backgroundColor: '#e3e3e3' }]}>
-            <ThemedText style={{ color: '#000', fontSize: 16 }}>New Trip Request</ThemedText>
+          <View style={[styles.actionCard, { backgroundColor: backgroundColor }]}>
+            <ThemedText style={{ fontSize: 16 }}>New Trip Request</ThemedText>
           </View>
-          <View style={[styles.actionCard, { backgroundColor: '#e3e3e3' }]}>
-            <ThemedText style={{ color: '#000', fontSize: 16 }}>Expenses Report</ThemedText>
+          <View style={[styles.actionCard, { backgroundColor: backgroundColor }]}>
+            <ThemedText style={{ fontSize: 16 }}>Expenses Report</ThemedText>
           </View>
-          <View style={[styles.actionCard, { backgroundColor: '#e3e3e3' }]}>
-            <ThemedText style={{ color: '#000', fontSize: 16 }}>Pending Approvations</ThemedText>
+          <View style={[styles.actionCard, { backgroundColor: backgroundColor }]}>
+            <ThemedText style={{ fontSize: 16 }}>Pending Approvations</ThemedText>
           </View>
-          <View style={[styles.actionCard, { backgroundColor: '#e3e3e3' }]}>
-            <ThemedText style={{ color: '#000', fontSize: 16 }}>Report Issues</ThemedText>
+          <View style={[styles.actionCard, { backgroundColor: backgroundColor }]}>
+            <ThemedText style={{ fontSize: 16 }}>Report Issues</ThemedText>
           </View>
         </ScrollView>
       </View>

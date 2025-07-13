@@ -20,3 +20,10 @@ export const formatCompleteDate = (dateString: string | null): string => {
     hour12: true,
   }).format(date);
 };
+
+export function formatUSD(amount: number): string {
+  return new Intl.NumberFormat('en-US', {
+    style: 'currency',
+    currency: 'USD',
+  }).format(amount);
+}

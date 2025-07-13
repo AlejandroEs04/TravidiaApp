@@ -1,11 +1,18 @@
 import ThemedButton from '@/components/ThemedButton'
+import { ThemedText } from '@/components/ThemedText'
 import { ThemedView } from '@/components/ThemedView'
+import { Colors } from '@/constants/Colors'
 import { useAppContext } from '@/hooks/AppContext'
+import { useThemeColor } from '@/hooks/useThemeColor'
 import { FontAwesome } from '@expo/vector-icons'
 import React from 'react'
-import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native'
+import { Pressable, ScrollView, StyleSheet, View } from 'react-native'
 
 export default function settings() {
+    const background = useThemeColor({ light: Colors.light.background, dark: Colors.dark.background }, 'background')
+    const backgroundColor = useThemeColor({ light: Colors.light.container, dark: Colors.dark.container }, 'background')
+    const color = useThemeColor({ light: Colors.light.text, dark: Colors.dark.text }, 'text')
+    
     const settings: { name: string; icon: React.ComponentProps<typeof FontAwesome>['name']; url: string }[] = [
         {
             name: 'Profile', 
@@ -41,21 +48,21 @@ export default function settings() {
 
     const { logOut } = useAppContext()
     return (
-        <ScrollView>
+        <ScrollView style={{ flex: 1, backgroundColor: background }}>
             <ThemedView style={styles.container}>
                 <View style={{gap: 50}}>
-                    <View style={styles.settingsContainer}>
+                    <View style={[styles.settingsContainer, { backgroundColor }]}>
                         {settings.map((setting, i) => (
                             <Pressable key={setting.name} style={[
                                 styles.settingContainer,
-                                i+1 === settings.length ? undefined : styles.settingContainerBorder
+                                i+1 === settings.length ? undefined : styles.settingContainerBorder,
                             ]}>
                                 <FontAwesome
                                     name={setting.icon}
                                     size={25}
-                                    color={'black'}
+                                    color={color}
                                 />
-                                <Text style={styles.settingContainerText}>{setting.name}</Text>
+                                <ThemedText style={styles.settingContainerText}>{setting.name}</ThemedText>
                             </Pressable>
                         ))}
                     </View>
@@ -75,7 +82,6 @@ const styles = StyleSheet.create({
         justifyContent: 'space-between'
     }, 
     settingsContainer: {
-        backgroundColor: 'white', 
         borderRadius: 20,
         shadowColor: '#000000',
         shadowOffset: {

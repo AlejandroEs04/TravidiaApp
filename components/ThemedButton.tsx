@@ -1,7 +1,7 @@
 import { Colors } from '@/constants/Colors'
 import { useColorScheme } from '@/hooks/useColorScheme.web'
 import React from 'react'
-import { Pressable, StyleProp, StyleSheet, Text, ViewStyle } from 'react-native'
+import { Pressable, StyleProp, StyleSheet, Text, TextStyle, ViewStyle } from 'react-native'
 
 type ThemedButtonProps = {
     onClick: () => void
@@ -9,9 +9,10 @@ type ThemedButtonProps = {
     type?: 'default' | 'danger' | 'success'
     size?: 'default' | 'small'
     styles?: StyleProp<ViewStyle>
+    textStyle?: StyleProp<TextStyle>
 }
 
-export default function ThemedButton({ onClick, text, type = 'default', styles, size = 'default' } : ThemedButtonProps) {
+export default function ThemedButton({ onClick, text, type = 'default', styles, size = 'default', textStyle } : ThemedButtonProps) {
     const colorScheme = useColorScheme()
 
     return (
@@ -29,6 +30,7 @@ export default function ThemedButton({ onClick, text, type = 'default', styles, 
                 buttonStyles.text, 
                 size === 'default' ? buttonStyles.textDefault : undefined,
                 size === 'small' ? buttonStyles.textSmall : undefined,
+                textStyle
             ]}>{text}</Text>
         </Pressable>
     )

@@ -56,7 +56,7 @@ export default function Login() {
             {error && <ErrorContainer message={error} />}
 
             <View style={styles.form}>
-                <Input onChange={handleChange} placeholder='Ej. correo@acreead.com' id='email' label='Email' value={login.email} />
+                <Input onChange={handleChange} placeholder='Ej. correo@acreead.com' id='email' label='Email' value={login.email} type='email-address' />
                 <Input onChange={handleChange} placeholder='Password' id='password' label='Password' value={login.password} secureTextEntry />
             </View>
 
