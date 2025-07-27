@@ -1,13 +1,18 @@
+import ThemedButton from '@/components/ThemedButton'
 import { ThemedText } from '@/components/ThemedText'
 import { ThemedView } from '@/components/ThemedView'
 import TripExpenseContainer from '@/components/ui/TripExpenseContainer'
 import { Colors } from '@/constants/Colors'
 import { useAppContext } from '@/hooks/AppContext'
+import { useThemeColor } from '@/hooks/useThemeColor'
 import { Trip as TripType } from '@/types'
 import { formatCompleteDate, formatSimpleDate } from '@/utils'
-import { useLocalSearchParams } from 'expo-router'
+import { FontAwesome } from '@expo/vector-icons'
+import Constants from 'expo-constants'
+import { useLocalSearchParams, useNavigation } from 'expo-router'
+import { navigate } from 'expo-router/build/global-state/routing'
 import React, { useEffect, useState } from 'react'
-import { ActivityIndicator, ScrollView, StyleSheet, Text, View } from 'react-native'
+import { ActivityIndicator, Platform, Pressable, ScrollView, StatusBar, StyleSheet, Text, View } from 'react-native'
 
 type TripInformationProps = {
     title: string
@@ -27,8 +32,14 @@ export default function Trip() {
     const [currentTrip, setCurrentTrip] = useState<TripType | null>(null)
     const { trips } = useAppContext()
     const local = useLocalSearchParams()
-
+    const navigation = useNavigation()
     const [days, setDays] = useState<string[]>([])
+    const color = useThemeColor({ light: Colors.light.text, dark: Colors.dark.text }, 'text')
+
+    const statusBarHeight =
+        Platform.OS === 'android'
+        ? StatusBar.currentHeight ?? 0
+        : Constants.statusBarHeight;
 
     const handleGetDays = () => {
         if(!currentTrip) return
@@ -58,6 +69,7 @@ export default function Trip() {
     useEffect(() => {
         handleGetDays()
     }, [currentTrip])
+
     if(currentTrip === null) return (
         <ThemedView style={{ flex: 1, justifyContent: 'center' }}>
             <ThemedText style={{ textAlign: 'center' }} type='subtitle'>Trip information not available yet</ThemedText>
@@ -66,9 +78,14 @@ export default function Trip() {
     )
 
     return (
-        <ThemedView style={styles.container}>
+        <ThemedView style={[ styles.container, { paddingTop: statusBarHeight + 20 } ]}>
             <ScrollView style={{ flex: 1 }}>
-                <ThemedText type='title'>{currentTrip.destiny}</ThemedText>
+                <Pressable onPress={() => navigation.goBack()} style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
+                    <FontAwesome name="arrow-left" size={20} color={color} />
+                    <ThemedText style={{ fontSize: 20 }}>Back</ThemedText>
+                </Pressable>
+                
+                <ThemedText type='title' style={{ marginTop: 20 }}>{currentTrip.destiny}</ThemedText>
                 <ThemedText>Created At: {formatCompleteDate(currentTrip.createdAt)}</ThemedText>
 
                 <View style={{ marginTop: 10 }}>
@@ -105,6 +122,10 @@ export default function Trip() {
                         </View>
                     ))}
                 </View>
+                    
+                {currentTrip?.status.toLowerCase() !== "canceled" && (
+                    <ThemedButton text='Expenses Report' onClick={() => navigate(`/trips/${currentTrip.id}/expensesReport`)} size='small' styles={{ marginTop: 20 }} />
+                )}
             </ScrollView>
         </ThemedView>
     )

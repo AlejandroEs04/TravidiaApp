@@ -1,4 +1,5 @@
 import { getExpenses } from '@/api/expensesApi'
+import { createTripExpenses } from '@/api/tripExpenseApi'
 import Input from '@/components/Input'
 import InputFile from '@/components/InputFile'
 import Select from '@/components/Select'
@@ -76,8 +77,8 @@ export default function expensesReport() {
 
     const handleSubmit = async() => {
         try {
-            console.log(expense)
-            console.log(selectedDocuments)
+            const response = await createTripExpenses(trip?.id!, expense)
+            console.log(response)
         } catch (error) {
             console.log(error)
             if (error && typeof error === 'object' && 'message' in error && typeof (error as any).message === 'string') {
@@ -126,7 +127,7 @@ export default function expensesReport() {
                     <ThemedText style={{ fontSize: 20 }}>Back</ThemedText>
                 </Pressable>
 
-                <ThemedText type='title' style={{ marginTop: 10 }}>{trip?.destiny}</ThemedText>
+                <ThemedText type='title' style={{ marginTop: 20 }}>{trip?.destiny}</ThemedText>
 
                 <FlatList
                     horizontal
@@ -160,6 +161,8 @@ export default function expensesReport() {
                 ) : (
                     <ThemedText type='subtitle' style={{ textAlign: 'center', marginTop: 20 }}>Please, select a day</ThemedText>
                 )}
+
+                
 
             </ScrollView>
         </ThemedView>

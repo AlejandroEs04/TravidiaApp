@@ -23,7 +23,7 @@ export default function RootLayout() {
         <Stack>
           <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
           <Stack.Screen name="auth/login" options={{ headerShown: false }} />
-          <Stack.Screen name="trips/[trip]" options={{ headerShown: true, title: 'Trip Information' }} />
+          <Stack.Screen name="trips/[trip]" options={{ headerShown: false, title: 'Trip Information' }} />
           <Stack.Screen name="trips/[trip]/expensesReport" options={{ headerShown: false, title: 'Expenses Report' }} />
           <Stack.Screen name="+not-found" />
         </Stack>
